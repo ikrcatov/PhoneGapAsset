@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<title>CodeMirror</title>
+<meta charset="utf-8"/>
+
+<link rel=stylesheet href="lib/codemirror.css">
+<link rel=stylesheet href="doc/docs.css">
+<link rel=stylesheet href="../www/index.css">
+<script src="lib/codemirror.js"></script>
+<script src="mode/xml/xml.js"></script>
+<script src="mode/javascript/javascript.js"></script>
+<!--<script src="../www/cordova_plugins.js"></script>-->
+<!--<script type="text/javascript" src="../www/js/index.js"></script>-->
+
+<!--THIS ONE IS FOR STANDARD DEBUG-->
+<script src="../www/cordova.js"></script>
+
+<!--ADOBE BUILD NEEDS THIS ONE-->
+<!--<script src="cordova.js"></script>-->
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" type="text/css" media="screen" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css" />
+
+<style>
+    .CodeMirror { height: auto; border: 1px solid #ddd; }
+    .CodeMirror-scroll { max-height: 200px; }
+    .CodeMirror pre { padding-left: 7px; line-height: 1.25; }
+</style>
+
+<section id="mainSection">
+    <h2>Procedo PhoneGap</h2>
+    <form id="mainForm" style="position: relative; margin-top: .5em;">
+        <textarea id="code" name="code" class="code" style="display: none;"></textarea>
+
+        <div id="showHideButtonContainer" class="showHideButtonContainer" style="width: 100px; height: 50px; margin-top: 5%">
+            <input type="button" name="showHideButton" id="showHideButton" value="Show/Hide" />
+        </div>
+    </form>
+
+    <script>
+
+        var $ = jQuery;
+        var buttonPressed = false;
+        /*IF BUTTON PRESSED == TRUE, THEN HIDE KEYBOARD*/
+        document.addEventListener("deviceReady", deviceReady, false);
+
+        function deviceReady() {
+
+            window.addEventListener('native.keyboardshow', keyboardShowHandler);
+            window.addEventListener('native.keyboardhide', keyboardHideHandler);
+
+            $('#showHideButton').on('click', function (e) {
+                buttonPressed = !buttonPressed;
+                keyboardShowHandler();
+            });
+
+            if(window.cordova && window.cordova.plugins.Keyboard) {
+                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+            }
+
+            $('textarea').click(function(e){ $(this).focus(); });
+            $('textarea').trigger('click');
+        }
+
+        // This event fires when the keyboard will be shown
+        function keyboardShowHandler(e){
+
+            //alert("Pressed: " + buttonPressed);
+            if(buttonPressed)
+            {
+                //alert("IS VISIBLE KEYBOARD: " + cordova.plugins.Keyboard.isVisible);
+                /*IF TRUE THEN CLOSE*/
+                if(cordova.plugins.Keyboard.isVisible)
+                    cordova.plugins.Keyboard.close();
+                else {
+                    $('textarea').focus();
+                    cordova.plugins.Keyboard.show();
+                }
+            }
+            else
+            {
+                $('textarea').focus();
+                cordova.plugins.Keyboard.show();
+            }
+        }
+
+        // This event fires when the keyboard will hide
+        function keyboardHideHandler(e){
+            cordova.plugins.Keyboard.close();
+        }
+
+        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            lineWrapping: true,
+            autoCloseBrackets: true,
+            showTrailingSpace: true,
+            indentUnit: 4,
+            indentWithTabs: true,
+            viewportMargin: Infinity,
+            autofocus: false
+        });
+
+    </script>
+</section>
