@@ -59,8 +59,7 @@
                 cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
             }
 
-            $('textarea').click(function(e){ $(this).focus(); });
-            $('textarea').trigger('click');
+            //keyboardShowHandler();
         }
 
         // This event fires when the keyboard will be shown
@@ -72,7 +71,10 @@
                 //alert("IS VISIBLE KEYBOARD: " + cordova.plugins.Keyboard.isVisible);
                 /*IF TRUE THEN CLOSE*/
                 if(cordova.plugins.Keyboard.isVisible)
+                {
+                    $('textarea').focus();
                     cordova.plugins.Keyboard.close();
+                }
                 else {
                     $('textarea').focus();
                     cordova.plugins.Keyboard.show();
@@ -87,7 +89,7 @@
 
         // This event fires when the keyboard will hide
         function keyboardHideHandler(e){
-            cordova.plugins.Keyboard.close();
+            //alert("Pressed: " + buttonPressed);
         }
 
         var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -100,7 +102,16 @@
             indentUnit: 4,
             indentWithTabs: true,
             viewportMargin: Infinity,
-            autofocus: false
+            autofocus: true
+        });
+
+        editor.on("blur", function(e){
+            keyboardShowHandler();
+            e.stopPropagation();
+        });
+
+        editor.on("focus", function(){
+            keyboardShowHandler();
         });
 
     </script>
